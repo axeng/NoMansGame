@@ -142,8 +142,9 @@ namespace NoMansGame
 					Console.WriteLine(e);
 				}
 
-				Console.WriteLine("\n\nDo you want to continue ? (y or n)");
-				game = Console.ReadKey(true).Key == ConsoleKey.Y;
+				Console.WriteLine("\n\nPress a key to restart");
+				Console.ReadKey(true);
+				//game = Console.ReadKey(true).Key == ConsoleKey.Y;
 			}
 		}
 	}
