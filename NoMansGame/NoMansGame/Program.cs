@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace NoMansGame
@@ -21,113 +22,129 @@ namespace NoMansGame
 
 			int walk = 0;
 
-			Console.WriteLine("press a key to start");
-			Console.ReadKey();
+			bool game = true;
 
-			Queue l1 = new Queue();
-			Queue l2 = new Queue();
+			List<int> score = new List<int>();
 
-			for (int i = 0; i < Console.BufferWidth; i++)
+			while (game)
 			{
-				l1.Enqueue(" ");
-				if (i >= (Console.BufferWidth / 6))
+				score.Add(0);
+
+				Console.WriteLine("press a key to start");
+				Console.ReadKey();
+
+				Queue l1 = new Queue();
+				Queue l2 = new Queue();
+
+				for (int i = 0; i < Console.BufferWidth; i++)
 				{
-					if (random.Next(100) <= 10)
+					l1.Enqueue(" ");
+					if (i >= (Console.BufferWidth / 6))
 					{
-						l2.Enqueue(bloc);
-						//Console.WriteLine("more");
+						if (random.Next(100) <= 10 && !(l2.ToArray()[l2.Count - 1] == bloc && l2.ToArray()[l2.Count - 12] == bloc))
+						{
+							l2.Enqueue(bloc);
+							//Console.WriteLine("more");
+						}
+						else
+						{
+							l2.Enqueue("_");
+						}
 					}
 					else
 					{
 						l2.Enqueue("_");
 					}
 				}
-				else
+
+				//Console.ReadKey();
+
+				bool ok = true;
+
+				while (ok)
 				{
-					l2.Enqueue("_");
-				}
-			}
-
-			//Console.ReadKey();
-
-			bool ok = true;
-			int score = 0;
-
-			while (ok)
-			{
-				if (load || watch.Elapsed.Milliseconds >= 100)
-				{
-					Console.Clear();
-
-					if (lastKey == ConsoleKey.UpArrow)
+					if (load || watch.Elapsed.Milliseconds >= 100)
 					{
-						fly = true;
-						walk = 0;
-					}
-					else
-					{
-						if (walk >= 3)
+						Console.Clear();
+
+						if (lastKey == ConsoleKey.UpArrow)
 						{
-							fly = false;
-						}
-
-						walk++;
-					}
-
-					lastKey = ConsoleKey.NoName;
-
-					l2.Dequeue();
-					if (random.Next(100) <= 10)
-						l2.Enqueue(bloc);
-					else
-						l2.Enqueue("_");
-
-
-					for (int i = 0; i < l1.Count; i++)
-					{
-						if (i == 2 && fly)
-							Console.Write(perso);
-						else
-							Console.Write(l1.ToArray()[i]);
-					}
-					for (int i = 0; i < l2.Count; i++)
-					{
-						if (i == 2 && !fly)
-						{
-							if (l2.ToArray()[i] == bloc)
-								ok = false;
-							else 
-								Console.Write(perso);
+							fly = true;
+							walk = 0;
 						}
 						else
-							Console.Write(l2.ToArray()[i]);
-					}
+						{
+							if (walk >= 3)
+							{
+								fly = false;
+							}
 
-					score++;
+							walk++;
+						}
 
-					watch.Restart();
-					load = false;
-					continue;
-				}
-
-				if (Console.KeyAvailable)
-				{
-					lastKey = Console.ReadKey(true).Key;
-					if (fly)
-					{
 						lastKey = ConsoleKey.NoName;
+
+						l2.Dequeue();
+						if (random.Next(100) <= 10 && !(l2.ToArray()[l2.Count - 1] == bloc && l2.ToArray()[l2.Count - 12] == bloc))
+							l2.Enqueue(bloc);
+						else
+							l2.Enqueue("_");
+
+
+						for (int i = 0; i < l1.Count; i++)
+						{
+							if (i == 2 && fly)
+								Console.Write(perso);
+							else
+								Console.Write(l1.ToArray()[i]);
+						}
+						for (int i = 0; i < l2.Count; i++)
+						{
+							if (i == 2 && !fly)
+							{
+								if (l2.ToArray()[i] == bloc)
+									ok = false;
+								else
+									Console.Write(perso);
+							}
+							else
+								Console.Write(l2.ToArray()[i]);
+						}
+
+						score[score.Count - 1] = score[score.Count - 1] + 1;
+
+						watch.Restart();
+						load = false;
+						continue;
 					}
-					else
+
+					if (Console.KeyAvailable)
 					{
-						load = true;
+						lastKey = Console.ReadKey(true).Key;
+						if (fly)
+						{
+							lastKey = ConsoleKey.NoName;
+						}
+						else
+						{
+							load = true;
+						}
 					}
 				}
-			}
 
-			Console.Clear();
-			Console.WriteLine("GAME OVER ");
-			Console.WriteLine("score : " + score);
-			       
+				Console.Clear();
+				Console.WriteLine("GAME OVER ");
+				Console.WriteLine("Your score : " + score[score.Count-1]);
+
+				Console.WriteLine("\nLAST SCORE : ");
+				foreach(int e in score)
+				{
+					Console.WriteLine(e);
+				}
+
+				Console.WriteLine("\n\nDo you want to continue ? (y or n)");
+				game = Console.ReadKey(true).Key == ConsoleKey.Y;
+			}
 		}
 	}
 }
